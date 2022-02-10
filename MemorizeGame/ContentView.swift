@@ -37,6 +37,9 @@ struct CardView: View {
                 shape.fill().foregroundColor(.white)
                 shape.strokeBorder(lineWidth: 3, antialiased: true)
                 Text(card.content).font(.largeTitle)
+                if card.isMatched {
+                    Text("✔️").font(.largeTitle).opacity(0.5)
+                }
             } else {
                 shape.fill()
             }
