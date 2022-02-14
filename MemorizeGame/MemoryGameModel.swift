@@ -9,7 +9,10 @@ import Foundation
 
 struct MemoryGameModel<CardContent> where CardContent: Equatable {
     private(set) var cards: [Card]
-    private var indexOfFirstCard: Int?
+    private var indexOfFirstCard: Int? {
+        get { cards.indices.filter({ cards[$0].isFaceUp }).oneAndOnly }
+        set { cards.indices.forEach { cards[$0].isFaceUp = ($0 == newValue) }}
+    }
     
     init(numberOfPairOfCard: Int, createContent: (Int) -> CardContent) {
         cards = [Card]()
@@ -27,15 +30,12 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
                     cards[firstCardIndex].isMatched = true
                     cards[chosenIndex].isMatched = true
                 }
-                indexOfFirstCard = nil
             } else {
-                for index in cards.indices {
-                    cards[index].isFaceUp = cards[index].isMatched
-                }
                 indexOfFirstCard = chosenIndex
             }
-            cards[chosenIndex].isFaceUp.toggle()
+            cards[chosenIndex].isFaceUp = true
         }
+        print(cards)
     }
     
     struct Card: Identifiable {
@@ -43,5 +43,15 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
         var isFaceUp = false
         var isMatched = false
         let content: CardContent
+    }
+}
+
+extension Array {
+    var oneAndOnly: Element? {
+        if self.count == 1 {
+            return self.first
+        } else {
+            return nil
+        }
     }
 }
