@@ -28,22 +28,35 @@ struct EmojiMemoryGameView: View {
 }
 
 struct CardView: View {
+    private typealias CVC = CardViewConstants
     let card: EmojiMemoryGameViewModel.Card
     
     var body: some View {
-        ZStack {
-            let shape = RoundedRectangle(cornerRadius: 20)
-            if card.isFaceUp {
-                shape.fill().foregroundColor(.white)
-                shape.strokeBorder(lineWidth: 3, antialiased: true)
-                Text(card.content).font(.largeTitle)
-            } else {
-                shape.fill()
-                if card.isMatched {
-                    Text("✔️").font(.largeTitle).opacity(0.5)
+        GeometryReader { geometry in
+            ZStack {
+                let shape = RoundedRectangle(cornerRadius: CVC.cornerRadius)
+                if card.isFaceUp {
+                    shape.fill().foregroundColor(.white)
+                    shape.strokeBorder(lineWidth: CVC.lineWidth, antialiased: true)
+                    Text(card.content).font(contentSize(in: geometry.size))
+                } else {
+                    shape.fill()
+                    if card.isMatched {
+                        Text("✔️").font(.largeTitle).opacity(0.5)
+                    }
                 }
             }
         }
+    }
+    
+    private func contentSize(in size: CGSize) -> Font {
+        Font.system(size: min(size.width, size.height) * CVC.scaleFactor)
+    }
+    
+    private struct CardViewConstants {
+        static let cornerRadius: CGFloat = 20
+        static let lineWidth: CGFloat = 3
+        static let scaleFactor: CGFloat = 0.7
     }
 }
 
