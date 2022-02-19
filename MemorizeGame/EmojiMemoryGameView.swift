@@ -11,16 +11,12 @@ struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGameViewModel
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-                ForEach(viewModel.cards) { card in
-                    CardView(card: card)
-                        .aspectRatio(2/3, contentMode: .fit)
-                        .onTapGesture {
-                            viewModel.choose(card)
-                        }
+        AspectVGrid(items: viewModel.cards, aspectRatio: 2/3) { card in
+            CardView(card: card)
+                .padding(4)
+                .onTapGesture {
+                    viewModel.choose(card)
                 }
-            }
         }
         .foregroundColor(.red)
         .padding(.horizontal)
@@ -38,6 +34,9 @@ struct CardView: View {
                 if card.isFaceUp {
                     shape.fill().foregroundColor(.white)
                     shape.strokeBorder(lineWidth: CVC.lineWidth, antialiased: true)
+                    PieShape(startAngle: Angle(degrees: 0 - 90), endAngle: Angle(degrees: 135 - 90))
+                        .padding(CVC.circlePadding)
+                        .opacity(CVC.circleOpacity)
                     Text(card.content).font(contentSize(in: geometry.size))
                 } else {
                     shape.fill()
@@ -54,9 +53,11 @@ struct CardView: View {
     }
     
     private struct CardViewConstants {
-        static let cornerRadius: CGFloat = 20
+        static let cornerRadius: CGFloat = 10
         static let lineWidth: CGFloat = 3
         static let scaleFactor: CGFloat = 0.7
+        static let circlePadding: CGFloat = 5
+        static let circleOpacity: Double = 0.5
     }
 }
 
@@ -65,9 +66,11 @@ struct CardView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = EmojiMemoryGameViewModel()
-        EmojiMemoryGameView(viewModel: viewModel)
+        let firstCard = viewModel.cards.first!
+        viewModel.choose(firstCard)
+        return EmojiMemoryGameView(viewModel: viewModel)
             .preferredColorScheme(.light)
-        EmojiMemoryGameView(viewModel: viewModel)
-            .preferredColorScheme(.dark)
+//        EmojiMemoryGameView(viewModel: viewModel)
+//            .preferredColorScheme(.dark)
     }
 }
