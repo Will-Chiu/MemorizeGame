@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		853EED3027C45B0900465632 /* Cardify.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853EED2F27C45B0900465632 /* Cardify.swift */; };
 		85505FF527BD68A400516E27 /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85505FF427BD68A400516E27 /* AspectVGrid.swift */; };
 		85505FF727C028B100516E27 /* PieShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85505FF627C028B100516E27 /* PieShape.swift */; };
 		8576692A27B3391800B3C286 /* MemorizeGameApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8576692927B3391800B3C286 /* MemorizeGameApp.swift */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		853EED2F27C45B0900465632 /* Cardify.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cardify.swift; sourceTree = "<group>"; };
 		85505FF427BD68A400516E27 /* AspectVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectVGrid.swift; sourceTree = "<group>"; };
 		85505FF627C028B100516E27 /* PieShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieShape.swift; sourceTree = "<group>"; };
 		8576692627B3391800B3C286 /* MemorizeGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MemorizeGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,6 +104,7 @@
 		8576692827B3391800B3C286 /* MemorizeGame */ = {
 			isa = PBXGroup;
 			children = (
+				853EED2F27C45B0900465632 /* Cardify.swift */,
 				8576695327B358C300B3C286 /* MemoryGameModel.swift */,
 				8576695527B35AA400B3C286 /* EmojiMemoryGameViewModel.swift */,
 				8576692B27B3391800B3C286 /* EmojiMemoryGameView.swift */,
@@ -270,6 +273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8576695627B35AA400B3C286 /* EmojiMemoryGameViewModel.swift in Sources */,
+				853EED3027C45B0900465632 /* Cardify.swift in Sources */,
 				8576692C27B3391800B3C286 /* EmojiMemoryGameView.swift in Sources */,
 				8576695427B358C300B3C286 /* MemoryGameModel.swift in Sources */,
 				85505FF527BD68A400516E27 /* AspectVGrid.swift in Sources */,
