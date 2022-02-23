@@ -20,13 +20,14 @@ struct Cardify: ViewModifier {
             if isFaceUp {
                 shape.fill().foregroundColor(.white)
                 shape.strokeBorder(lineWidth: CVC.lineWidth, antialiased: true)
-                content
             } else {
                 shape.fill()
                 if isMatched {
                     Text("✔️").font(.largeTitle).opacity(0.5)
                 }
             }
+            // putting content here, because the animation only happens after the view is already on screen.
+            content.opacity(isFaceUp ? 1 : 0)
         }
     }
     

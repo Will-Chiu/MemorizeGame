@@ -29,12 +29,15 @@ struct CardView: View {
     
     var body: some View {
         GeometryReader { geometry in
+            let animation = Animation.linear(duration: CVC.animationTime).repeatForever(autoreverses: false)
             ZStack {
-                
                 PieShape(startAngle: Angle(degrees: 0 - 90), endAngle: Angle(degrees: 135 - 90))
                     .padding(CVC.circlePadding)
                     .opacity(CVC.circleOpacity)
-                Text(card.content).font(contentSize(in: geometry.size))
+                Text(card.content)
+                    .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
+                    .animation(animation, value: card.isMatched)
+                    .font(contentSize(in: geometry.size))
             }.cardify(isFaceUp: card.isFaceUp, isMatched: card.isMatched)
         }
     }
@@ -49,6 +52,7 @@ struct CardView: View {
         static let scaleFactor: CGFloat = 0.7
         static let circlePadding: CGFloat = 5
         static let circleOpacity: Double = 0.5
+        static let animationTime: Double = 1.5
     }
 }
 
