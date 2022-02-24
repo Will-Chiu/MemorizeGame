@@ -11,15 +11,32 @@ struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGameViewModel
     
     var body: some View {
+        VStack {
+            gameBody
+            shuffle
+        }
+        .padding()
+    }
+    
+    var gameBody: some View {
         AspectVGrid(items: viewModel.cards, aspectRatio: 2/3) { card in
             CardView(card: card)
                 .padding(4)
                 .onTapGesture {
-                    viewModel.choose(card)
+                    withAnimation(Animation.easeInOut(duration: 1)) {
+                        viewModel.choose(card)
+                    }
                 }
         }
         .foregroundColor(.red)
-        .padding(.horizontal)
+    }
+    
+    var shuffle: some View {
+        Button("Shuffle") {
+            withAnimation(Animation.easeInOut(duration: 1)) {
+                viewModel.shuffle()
+            }
+        }
     }
 }
 
@@ -61,8 +78,8 @@ struct CardView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = EmojiMemoryGameViewModel()
-        let firstCard = viewModel.cards.first!
-        viewModel.choose(firstCard)
+//        let firstCard = viewModel.cards.first!
+//        viewModel.choose(firstCard)
         return EmojiMemoryGameView(viewModel: viewModel)
             .preferredColorScheme(.light)
 //        EmojiMemoryGameView(viewModel: viewModel)
