@@ -9,6 +9,15 @@ import SwiftUI
 
 struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGameViewModel
+    @State private var dealtCards = Set<Int>()
+    
+    private func deal(_ card: EmojiMemoryGameViewModel.Card) {
+        dealtCards.insert(card.id)
+    }
+    
+    private func isDealt(_ id: Int) -> Bool {
+        dealtCards.contains(id)
+    }
     
     var body: some View {
         VStack {
@@ -20,15 +29,27 @@ struct EmojiMemoryGameView: View {
     
     var gameBody: some View {
         AspectVGrid(items: viewModel.cards, aspectRatio: 2/3) { card in
-            CardView(card: card)
-                .padding(4)
-                .onTapGesture {
-                    withAnimation(Animation.easeInOut(duration: 1)) {
-                        viewModel.choose(card)
+            if (card.isMatched && !card.isFaceUp) {
+                // if there is no code here, which means no VIEW will be returned and the card will be removed from the AspectVGrid
+                Color.clear     //  = CardView(card: card).opacity(0)
+            } else if isDealt(card.id) {
+                CardView(card: card)
+                    .padding(4)
+                    .transition(AnyTransition.asymmetric(insertion: .scale, removal: .scale).animation(.easeInOut))
+                    .onTapGesture {
+                        withAnimation(Animation.easeInOut(duration: 1)) {
+                            viewModel.choose(card)
+                        }
                     }
-                }
+            }
         }
         .foregroundColor(.red)
+        .onAppear {
+            // Using onAppear and dealtCards otherwise there is no transition (.scale) for card show-up
+            for card in viewModel.cards {
+                deal(card)
+            }
+        }
     }
     
     var shuffle: some View {
