@@ -32,5 +32,9 @@ class EmojiMemoryGameViewModel: ObservableObject {
     func shuffle() {
         model.shuffle()
     }
+    
+    func restart() {
+        model = EmojiMemoryGameViewModel.createModel()
+    }
 }
 

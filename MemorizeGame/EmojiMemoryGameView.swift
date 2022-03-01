@@ -10,19 +10,44 @@ import SwiftUI
 struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGameViewModel
     @State private var dealtCards = Set<Int>()
+    @Namespace private var dealCardNamesapce
     
     private func deal(_ card: EmojiMemoryGameViewModel.Card) {
         dealtCards.insert(card.id)
     }
     
-    private func isDealt(_ id: Int) -> Bool {
-        dealtCards.contains(id)
+    private func isDealt(_ card: EmojiMemoryGameViewModel.Card) -> Bool {
+        dealtCards.contains(card.id)
+    }
+    
+    private func dealAnimation(for card: EmojiMemoryGameViewModel.Card) -> Animation {
+        var delay = 0.0
+        if let index = viewModel.cards.firstIndex(where: { $0.id == card.id }) {
+            delay = Double(index) * DeckConstant.totalDelaDuration / Double(viewModel.cards.count)
+        }
+        return Animation.easeInOut(duration: DeckConstant.dealDuration).delay(delay)
+    }
+    
+    private func zIndex(of card: EmojiMemoryGameViewModel.Card) -> Double {
+        -Double(viewModel.cards.firstIndex(where: { $0.id == card.id}) ?? 0)
     }
     
     var body: some View {
-        VStack {
-            gameBody
-            shuffle
+        ZStack(alignment: .bottom) {
+            VStack {
+                gameBody
+                HStack {
+                    restart
+                    Spacer()
+                    shuffle
+                }
+                .padding(.horizontal)
+            }
+            VStack {
+                deck
+                Spacer().frame(height: 30.0)
+                    
+            }
         }
         .padding()
     }
@@ -32,10 +57,13 @@ struct EmojiMemoryGameView: View {
             if (card.isMatched && !card.isFaceUp) {
                 // if there is no code here, which means no VIEW will be returned and the card will be removed from the AspectVGrid
                 Color.clear     //  = CardView(card: card).opacity(0)
-            } else if isDealt(card.id) {
+            } else if isDealt(card) {
                 CardView(card: card)
+                    .matchedGeometryEffect(id: card.id, in: dealCardNamesapce)
                     .padding(4)
-                    .transition(AnyTransition.asymmetric(insertion: .scale, removal: .scale).animation(.easeInOut))
+                    // use zIndex to align with Deck zIndex
+                    .zIndex(zIndex(of: card))
+                    .transition(AnyTransition.asymmetric(insertion: .identity, removal: .scale))
                     .onTapGesture {
                         withAnimation(Animation.easeInOut(duration: 1)) {
                             viewModel.choose(card)
@@ -43,11 +71,34 @@ struct EmojiMemoryGameView: View {
                     }
             }
         }
-        .foregroundColor(.red)
-        .onAppear {
-            // Using onAppear and dealtCards otherwise there is no transition (.scale) for card show-up
+        .foregroundColor(DeckConstant.color)
+    }
+
+    var deck: some View {
+        ZStack {
+            ForEach(viewModel.cards.filter{ !isDealt($0) }) { card in
+                CardView(card: card)
+                    .matchedGeometryEffect(id: card.id, in: dealCardNamesapce)
+                    .transition(AnyTransition.asymmetric(insertion: .identity, removal: .identity))
+                    .zIndex(zIndex(of: card))
+            }
+        }
+        .frame(width: DeckConstant.width, height: DeckConstant.height)
+        .foregroundColor(DeckConstant.color)
+        .onTapGesture {
             for card in viewModel.cards {
-                deal(card)
+                withAnimation(dealAnimation(for: card)) {
+                    deal(card)
+                }
+            }
+        }
+    }
+    
+    var restart: some View {
+        Button("Restart") {
+            withAnimation {
+                dealtCards = []
+                viewModel.restart()
             }
         }
     }
@@ -58,6 +109,15 @@ struct EmojiMemoryGameView: View {
                 viewModel.shuffle()
             }
         }
+    }
+    
+    private struct DeckConstant {
+        static let color = Color.red
+        static let aspectRatio: CGFloat = 2/3
+        static let dealDuration = 0.5
+        static let totalDelaDuration = 2.0
+        static let height: CGFloat = 90
+        static let width: CGFloat = 60
     }
 }
 

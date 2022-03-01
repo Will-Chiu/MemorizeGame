@@ -21,7 +21,7 @@ struct MemoryGameModel<CardContent> where CardContent: Equatable {
             cards.append(Card(id: pairIndex * 2, content: content))
             cards.append(Card(id: pairIndex * 2 + 1, content: content))
         }
-//        shuffle()
+        shuffle()
     }
     
     mutating func choose(_ card: Card) {
