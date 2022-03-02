@@ -125,13 +125,29 @@ struct CardView: View {
     private typealias CVC = CardViewConstants
     let card: EmojiMemoryGameViewModel.Card
     
+    @State private var animatedBonusRemaining: Double = 0
+    
     var body: some View {
         GeometryReader { geometry in
             let animation = Animation.linear(duration: CVC.animationTime).repeatForever(autoreverses: false)
             ZStack {
-                PieShape(startAngle: Angle(degrees: 0 - 90), endAngle: Angle(degrees: 135 - 90))
-                    .padding(CVC.circlePadding)
-                    .opacity(CVC.circleOpacity)
+                Group {
+                    if card.isConsumingBonusTime {
+                        PieShape(startAngle: Angle(degrees: 0 - 90),
+                                 endAngle: Angle(degrees: (1 - animatedBonusRemaining) * 360 - 90))
+                            .onAppear {
+                                animatedBonusRemaining = card.bonusRemaining
+                                withAnimation(.linear(duration: card.bonusTimeRemaining)) {
+                                    animatedBonusRemaining = 0
+                                }
+                            }
+                    } else {
+                        PieShape(startAngle: Angle(degrees: 0 - 90),
+                                 endAngle: Angle(degrees: (1 - card.bonusRemaining) * 360 - 90))
+                    }
+                }
+                .padding(CVC.circlePadding)
+                .opacity(CVC.circleOpacity)
                 Text(card.content)
                     .rotationEffect(Angle.degrees(card.isMatched ? 360 : 0))
                     .animation(animation, value: card.isMatched)
